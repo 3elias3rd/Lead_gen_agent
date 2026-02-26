@@ -20,8 +20,10 @@ def get_relevant_properties(search_restrictions: PropertyRequest | UserSession, 
     query_vector = get_embedding(f"A {search_restrictions.bedrooms} bedroom property for {search_restrictions.price} in {search_restrictions.location}")
 
     # Order Properties table by embedding similarity to the query embedding.
+    # TIER 1 STRICT MATCHING
     base_query = db.query(Property).order_by(Property.embedding.cosine_distance(query_vector))
 
+    # TIER 1 STRICT MATCHING
     # Add filter if data exists
     if search_restrictions.price is not None:
         base_query = base_query.filter(Property.price <= search_restrictions.price)
@@ -31,8 +33,25 @@ def get_relevant_properties(search_restrictions: PropertyRequest | UserSession, 
 
     if search_restrictions.bedrooms is not None:
         base_query = base_query.filter(Property.bedrooms == search_restrictions.bedrooms)
+    
+    exact_matches = base_query.limit(limit).all()
 
-    return base_query.limit(limit).all()
+    if exact_matches:
+        # Return exact matches if they are found
+        return exact_matches, "exact"
+    
+    # TIER 2: Ai fallback
+    # Sentence of what the user wants
+    user_preferences = f"A rental property in {search_restrictions.location} with {search_restrictions.bedrooms} bedrooms for under {search_restrictions.price} AED annually."
+
+    # Generate an embedding for these preferences.
+    query_vector = get_embedding(user_preferences)
+
+    # Use Cosine distance to find the most similar apartments.
+    fallback_matches = db.query(Property).order_by(Property.embedding.cosine_distance(query_vector)).limit(limit).all()
+
+    # Return the fallback matches
+    return fallback_matches, "fallback"
     
 def generate_restrictions(user_input: str):
 
@@ -55,12 +74,9 @@ def generate_restrictions(user_input: str):
 
     return search_restrictions
 
-def generate_image(location, bedrooms) -> str:
+def generate_image(description) -> str:
     prompt = (
-    f"Photorealistic image of a luxury {bedrooms}-bedroom apartment in {location}, "
-    "Dubai. Modern high-end architecture, floor-to-ceiling glass windows, city skyline view, "
-    "sunlit interiors, sleek contemporary furniture, ultra-realistic lighting, 8K resolution, "
-    "professional architectural photography style."
+    f"A realistic, unedited daytime photograph of a standard residential property in the UAE. Taken on a smartphone by a real estate agent. Natural lighting, authentic, standard residential architecture, not glossy, not CGI, no hyper-realistic filters. Description: {description}"
     )
 
     result = client.images.generate(

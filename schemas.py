@@ -5,6 +5,7 @@ class PropertyRequest(BaseModel):
     price: Optional[float] = Field(default=None, description="The neighborhood, area, or city mentioned.")
     location: Optional[str] = Field(default=None, description="The maximum budget or price.")
     bedrooms: Optional[int] = Field(default=None, description="The number of bedrooms.")
+    wants_to_view: Optional[bool] = Field(default=False, description="Set to True ONLY if the user explicitly asks to view a property, book a viewing, or speak to an agent.")
 
 class PropertyBase(BaseModel):
     title: str

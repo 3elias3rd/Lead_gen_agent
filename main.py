@@ -33,7 +33,6 @@ async def reply_whatsapp(
 
       return Response(content=str("<Response></Response>"), media_type="text/xml")
 
-
 async def create_message(From_number: str, message: str):
       db = SessionLocal()
       try:
@@ -64,6 +63,15 @@ async def create_message(From_number: str, message: str):
             # Extract intent from initial user message
             new_intent = generate_restrictions(user_input=message)
 
+            # Lead Handoff to an agent
+            if getattr(new_intent, "wants_to_view", False):
+                  # Clear the session so user can start affresh the next time
+                  stmt = delete(UserSession).where(UserSession.phone_number==From_number)
+                  db.execute(stmt)
+                  db.commit()
+
+                  return send_whatsapp(to=From_number, text="🎉 Excellent! I have forwarded your request to our leasing team. An agent will contact you on this number shortly to schedule the viewing. Have a great day!")
+
             # Update DB memory and return it
             user_state = update_session(phone_number=From_number, data=new_intent, db=db)
 
@@ -78,19 +86,21 @@ async def create_message(From_number: str, message: str):
                   return send_whatsapp(to=From_number, text="How many bedrooms are you looking for?")
             
             # Query db for relevant properties
-            relevant_properties = get_relevant_properties(search_restrictions=user_state, db=db)
+            relevant_properties, match_type = get_relevant_properties(search_restrictions=user_state, db=db)
 
-            if not relevant_properties:
-                  return send_whatsapp(to=From_number, text="I couldn't find properties matching your criteria. Try a different area or budget.")
+            # Tailor the greeting base on the Tier that as used
+            if match_type == "exact":
+                  send_whatsapp(to=From_number, text="Here are the best matches for you:\n")
+            else:
+                  send_whatsapp(to=From_number, text="I couldn't find an exact match for those criteria, but based on what you are looking for, here are the closest similar apartments:\n")
 
-            send_whatsapp(to=From_number, text="Here are the best matches :\n")
             
             for property in relevant_properties:
                   
-                  line = f"{property.title}, location: {property.location}, bedrooms:{property.bedrooms}, price: {property.price:,.0f}"
+                  line = f"*{property.title}*\n📍 Location: {property.location}\n🛏️ bedrooms:{property.bedrooms}\n💰 Annual Rent: AED{property.price:,.0f}\n\n{property.description}"
                   send_whatsapp(to=From_number, text=line, image_url=property.image_url)
             
-            send_whatsapp(to=From_number, text="\nWould you like more details on any of these?")
+            send_whatsapp(to=From_number, text="\nWould you to book a viewing for any of these.")
       
       finally:
             db.close()
