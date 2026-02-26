@@ -1,0 +1,11 @@
+fastapi
+twilio
+uvicorn
+python-multipart
+dotenv
+sqlalchemy
+pgvector
+openai
+psycopg2-binary
+boto3
+uuid

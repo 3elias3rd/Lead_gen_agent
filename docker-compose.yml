@@ -1,0 +1,26 @@
+services:
+  api:
+    build: .
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgresql://properties_db_owner:Muradzikwa5!@db:5432/properties_db
+  
+  db:
+    image: ankane/pgvector:v0.5.1
+    restart: always
+    environment:
+      POSTGRES_USER: properties_db_owner
+      POSTGRES_PASSWORD: Muradzikwa5!
+      POSTGRES_DB: properties_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
