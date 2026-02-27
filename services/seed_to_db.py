@@ -5,13 +5,13 @@ from models import Property, upload_to_s3, SessionLocal
 from services.ai_services import generate_image, get_embedding
 
 
-def property_to_db(title, price, location, bedrooms, description, db: Session):
+def property_to_db(title: str, price: float, location: str, bedrooms:int, description: str, db: Session) -> Property:
 
-    image_url = generate_image(description=description)
+    image_url = generate_image()
 
     aws_url = upload_to_s3(image_url=image_url)
 
-    embedding = get_embedding(description)
+    embedding = get_embedding(f"A {bedrooms} bedroom rental property in {location} for {price} AED annually. {description}")
 
     property = Property(title=title, description=description, price=price, location=location, bedrooms=bedrooms, embedding=embedding, image_url=aws_url)
 
@@ -148,6 +148,20 @@ dummy_properties = dummy_properties = [
         "description": "A classic 1-bedroom apartment in the Shoreline buildings on Palm Jumeirah. Older but well-kept standard finishing, with included access to the private beach club and gym.",
         "price": 160000,
         "location": "Palm Jumeirah",
+        "bedrooms": 1
+    },
+    {
+        "title": "Al Hamra Village 2BR Apartment",
+        "description": "A standard 2-bedroom open-plan apartment in Al Hamra Village. Features white walls, light wood flooring, and a small living area. The view from the kitchen shows basic grey cabinetry and a stainless steel refrigerator. Bright natural light coming from the balcony window.",
+        "price": 75000,
+        "location": "Ras Al Khaimah",
+        "bedrooms": 2
+    },
+    {
+        "title": "Al Qasba 1BR Canal View",
+        "description": "A practical 1-bedroom apartment near Al Qasba. The living room has a standard layout with exposed AC vents on the ceiling and neutral tile flooring. Includes a closed kitchen with standard white countertops. Midday sunlight illuminating an unfurnished living space.",
+        "price": 45000,
+        "location": "Sharjah",
         "bedrooms": 1
     }
 ]

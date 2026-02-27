@@ -7,6 +7,7 @@ from sqlalchemy import delete
 
 from typing import Annotated
 import os
+import asyncio
 
 from services.ai_services import generate_restrictions, get_relevant_properties
 from models import update_session, UserSession, send_whatsapp, get_db, SessionLocal
@@ -44,7 +45,7 @@ async def create_message(From_number: str, message: str):
 
                   return send_whatsapp(to=From_number, text="Session has been reset, what kind of property are you looking for?")
             
-            greetings = ["hi", "hello", "hey", "yo", "start", "good morning", "good evening"]
+            greetings = ["hi", "hello", "helo", "hey", "yo", "start", "good morning", "good evening"]
             if message.lower().strip() in greetings:
                   user_state = db.query(UserSession).filter(UserSession.phone_number==From_number).first()
 
@@ -93,13 +94,18 @@ async def create_message(From_number: str, message: str):
                   send_whatsapp(to=From_number, text="Here are the best matches for you:\n")
             else:
                   send_whatsapp(to=From_number, text="I couldn't find an exact match for those criteria, but based on what you are looking for, here are the closest similar apartments:\n")
+           
 
             
             for property in relevant_properties:
                   
                   line = f"*{property.title}*\n📍 Location: {property.location}\n🛏️ bedrooms:{property.bedrooms}\n💰 Annual Rent: AED{property.price:,.0f}\n\n{property.description}"
                   send_whatsapp(to=From_number, text=line, image_url=property.image_url)
+                  await asyncio.sleep(4) # Longer pause for heavy images.
             
+            await asyncio.sleep(4)
+            
+            # Send CTO
             send_whatsapp(to=From_number, text="\nWould you to book a viewing for any of these.")
       
       finally:

@@ -74,13 +74,17 @@ def generate_restrictions(user_input: str):
 
     return search_restrictions
 
-def generate_image(description) -> str:
+def generate_image() -> str:
     prompt = (
-    f"A realistic, unedited daytime photograph of a standard residential property in the UAE. Taken on a smartphone by a real estate agent. Natural lighting, authentic, standard residential architecture, not glossy, not CGI, no hyper-realistic filters. Description: {description}"
+    f"A realistic, wide-angle interior photograph of an apartment. "
+    f"With bright, natural daylight. Modern neutral decor, "
+    f"white walls, grey or tan walls and standard residential architecture. "
+    f"Make the image Authentic, not glossy, no CGI."
     )
 
     result = client.images.generate(
         model="dall-e-3",
+        quality="standard",
         prompt=prompt,
         response_format="url"
     )
