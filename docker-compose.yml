@@ -9,6 +9,11 @@ services:
       - db
     environment:
       - DATABASE_URL=postgresql://properties_db_owner:Muradzikwa5!@db:5432/properties_db
+    
+    volumes:
+      - ./:/app
+    
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
   
   db:
     image: ankane/pgvector:v0.5.1

@@ -130,20 +130,30 @@ def send_whatsapp(to: str, text: str, image_url: Optional[str] = None):
 
     
 def upload_to_s3(image_url: str):
-    image_bytes = requests.get(image_url).content
+    # Get response from pexels
+    response = requests.get(image_url)
 
+    # Get the content type (image/jpeg or image/png)
+    content_type = response.headers.get('Content-Type', 'image/png')
+    image_bytes = response.content
+
+    # Determine correct file extention for s3 key
+    extention = content_type.split('/')[-1]
     unique_id = str(uuid.uuid4())
-    object_name = f"property_{unique_id}.png"
+    object_name = f"property_{unique_id}.{extention}"
+
     bucket_name = "lead-bot-bucket"
         
     s3 = boto3.client('s3', region_name='eu-north-1')
+
+    # Pass content type to s3
     s3.put_object(
         Bucket=bucket_name,
         Key=object_name,
         Body=image_bytes,
         ACL='public-read',
-        ContentType='image/png')
+        ContentType=content_type)
 
-    return f"https://{bucket_name}.s3.amazonaws.com/{object_name}"
+    return f"https://{bucket_name}.s3.eu-north-1.amazonaws.com/{object_name}"
 
 create_tables()

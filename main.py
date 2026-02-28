@@ -100,10 +100,11 @@ async def create_message(From_number: str, message: str):
             for property in relevant_properties:
                   
                   line = f"*{property.title}*\n📍 Location: {property.location}\n🛏️ bedrooms:{property.bedrooms}\n💰 Annual Rent: AED{property.price:,.0f}\n\n{property.description}"
+                  
                   send_whatsapp(to=From_number, text=line, image_url=property.image_url)
-                  await asyncio.sleep(4) # Longer pause for heavy images.
+                  await asyncio.sleep(5) # Longer pause for heavy images.
             
-            await asyncio.sleep(4)
+            await asyncio.sleep(5)
             
             # Send CTO
             send_whatsapp(to=From_number, text="\nWould you to book a viewing for any of these.")
