@@ -16,10 +16,10 @@ __pycache__/
 .vscode/
 .idea/
 
-# OS Generated Files (Keeps Mac/Windows junk out of your repo)
+# OS Generated Files (Keeps Mac/Windows junk out of repo)
 .DS_Store
 Thumbs.db
 
-# Testing & Coverage (For when you add tests later)
+# Testing & Coverage (For tests later)
 .pytest_cache/
 .coverage

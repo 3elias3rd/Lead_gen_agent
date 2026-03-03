@@ -7,8 +7,8 @@ services:
       - "8000:8000"
     depends_on:
       - db
-    environment:
-      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}
+    # environment:
+    #   - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}
     
     volumes:
       - ./:/app
@@ -18,10 +18,10 @@ services:
   db:
     image: ankane/pgvector:v0.5.1
     restart: always
-    environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
+    # environment:
+    #   POSTGRES_USER: ${DB_USER}
+    #   POSTGRES_PASSWORD: ${DB_PASSWORD}
+    #   POSTGRES_DB: ${DB_NAME}
     ports:
       - "5433:5432"
     volumes:

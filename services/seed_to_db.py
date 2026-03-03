@@ -1,8 +1,16 @@
+import sys
+import os
+
+# Add root directory (one level up) to Python's system path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from sqlalchemy.orm import Session
 
 from models import Property, upload_to_s3, SessionLocal
 
 from services.ai_services import generate_image, get_embedding
+
+
 
 # Set to true if you want to use ai generated interiors
 USE_AI_GEN = False # Feature is currently dissabled because AI image felt too fake.
