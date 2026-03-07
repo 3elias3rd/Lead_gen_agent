@@ -91,11 +91,9 @@ async def create_message(From_number: str, message: str):
 
             # Tailor the greeting base on the Tier that as used
             if match_type == "exact":
-                  send_whatsapp(to=From_number, text="Here is the best matches for you:\n")
+                  send_whatsapp(to=From_number, text="Here is the best match for you:\n")
             else:
                   send_whatsapp(to=From_number, text="I couldn't find an exact match for those criteria, but based on what you are looking for, here are the closest similar apartments:\n")
-           
-
             
             for property in relevant_properties:
                   
@@ -107,7 +105,7 @@ async def create_message(From_number: str, message: str):
             await asyncio.sleep(5)
             
             # Send CTO
-            send_whatsapp(to=From_number, text="\nWould you to book a viewing for any of these.")
+            send_whatsapp(to=From_number, text="\nWould you liketo book a viewing for any of these?")
       
       finally:
             db.close()
