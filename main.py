@@ -91,7 +91,7 @@ async def create_message(From_number: str, message: str):
 
             # Tailor the greeting base on the Tier that as used
             if match_type == "exact":
-                  send_whatsapp(to=From_number, text="Here are the best matches for you:\n")
+                  send_whatsapp(to=From_number, text="Here is the best matches for you:\n")
             else:
                   send_whatsapp(to=From_number, text="I couldn't find an exact match for those criteria, but based on what you are looking for, here are the closest similar apartments:\n")
            

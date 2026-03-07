@@ -2,7 +2,6 @@
 
 A WhatsApp based real estate assistant that is designed to help customers find the best property available from their personal criteria. This effectively automates the discovery stage and allows the real estate agents to save time and filter low quality leads, effectively improving their daily workflow. To build the assistant I used Python, FastAPI and PostgreSQL. The bot uses LLM intent extraction and vector search to match the users criteria with the listings available within the database.
 
-
 ### 🧠 Stateful Conversation Memory (Solving Webhook Amnesia)
 Early on I found out that a major problem in building a SMS/WhatsApp agents is statelessness. Initially if the user asked for "a place in Downtown Dubai for 4800 AED a month", the bot would extract `{"location": "Downtown Dubai", "price": 48000}`. After realizing that the bedrooms field was missing, it would send a prompt back to the user asking for the missing information. At this point if the user replied with "2", the bot would now extract `{"bedrooms": 2}` and forget about the previous location and price input. This would lead to it now asking the user for previously provided information in an infinite loop.
 
@@ -35,9 +34,6 @@ To complete Lead Qualification Bot I needed to show the customer the images of t
 
 ## Installation
 
-## Installation
-
-
 **Prerequisites**
 Docker and docker compose
 An active Twilio Sandbox, Open API Key, and AWS S3 Bucket
@@ -57,7 +53,7 @@ TWILIO_AUTH_TOKEN=your_twilio_auth_token
 TWILIO_NUMBER=whatsapp:+14155238886
 AWS_ACCESS_KEY_ID=your_aws_key
 AWS_SECRET_ACCESS_KEY=your_aws_secret
-DATABASE_URL=postgresql://properties_db_owner:Muradzikwa5!@db:5432/properties_db
+DATABASE_URL=postgresql://properties_db_owner:password@db:5432/properties_db
 
 3. Build and Run the Containers
 *docker-compose up --build -d*
