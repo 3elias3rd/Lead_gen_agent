@@ -85,6 +85,13 @@ def update_session(phone_number: str, data: PropertyRequest, db: Session):
         # Safety check
         if not clean_data:
             user_state = db.query(UserSession).filter(UserSession.phone_number==phone_number).first()
+
+            if not user_state:
+                user_state = UserSession(phone_number=phone_number)
+                db.add(user_state)
+                db.commit()
+                db.refresh(user_state)
+            
             return user_state
 
         insert_values = {"phone_number": phone_number, **clean_data}
@@ -100,7 +107,6 @@ def update_session(phone_number: str, data: PropertyRequest, db: Session):
         )
 
         db.execute(upsert)
-        db.flush()
 
         db.commit()
         user_state = db.query(UserSession).filter(UserSession.phone_number==phone_number).first()
